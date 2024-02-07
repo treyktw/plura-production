@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import Stripe from 'stripe';
-import { stripe } from '@/lib/stripe';
-import { subscriptionCreated } from '@/lib/stripe/stripe-actions';
+import { NextRequest, NextResponse } from 'next/server'
+import { headers } from 'next/headers'
+import Stripe from 'stripe'
+import { stripe } from '@/lib/stripe'
+import { subscriptionCreated } from '@/lib/stripe/stripe-actions'
 
 const stripeWebhookEvents = new Set([
   'product.created',
@@ -13,13 +13,14 @@ const stripeWebhookEvents = new Set([
   'customer.subscription.created',
   'customer.subscription.updated',
   'customer.subscription.deleted',
-]);
+])
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   let stripeEvent: Stripe.Event
   const body = await req.text()
   const sig = headers().get('Stripe-Signature')
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET_LIVE ?? process.env.STRIPE_WEBHOOK_SECRET
+  const webhookSecret =
+    process.env.STRIPE_WEBHOOK_SECRET_LIVE ?? process.env.STRIPE_WEBHOOK_SECRET
   try {
     if (!sig || !webhookSecret) {
       console.log(
@@ -32,6 +33,8 @@ export async function POST(req: NextResponse) {
     console.log(`🔴 Error ${error.message}`)
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 })
   }
+
+  //
   try {
     if (stripeWebhookEvents.has(stripeEvent.type)) {
       const subscription = stripeEvent.data.object as Stripe.Subscription
@@ -79,6 +82,3 @@ export async function POST(req: NextResponse) {
     }
   )
 }
-
-
-
