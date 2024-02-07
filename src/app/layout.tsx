@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import ModalProvider from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from '@vercel/analytics/react';
 
 const font = DM_Sans({ subsets: ["latin"] });
 
@@ -29,6 +31,8 @@ export default function RootLayout({
           >
             <ModalProvider>
               {children}
+              <Analytics />
+              <SpeedInsights />
               <Toaster/>
             </ModalProvider>
           </ThemeProvider>
